@@ -3,111 +3,173 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>NP Products Loading</title>
+<title>NP Electricity Calculator</title>
 
 <style>
 
 body{
 margin:0;
+font-family:Arial;
+
+/* BACKGROUND IMAGE */
+
+background-image:url("https://images.unsplash.com/photo-1509395176047-4a66953fd231");
+background-size:cover;
+background-position:center;
+
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-flex-direction:column;
-background:#000;
-font-family:Arial;
+}
+
+.box{
+background:rgba(0,0,0,0.8);
+padding:30px;
+border-radius:15px;
+width:380px;
+text-align:center;
 color:white;
-overflow:hidden;
-}
-
-/* ELECTRIC BACKGROUND */
-
-.lightning{
-position:absolute;
-width:3px;
-height:100vh;
-background:cyan;
-box-shadow:0 0 20px cyan,0 0 40px cyan;
-animation:flash 1s infinite;
-opacity:0.4;
-}
-
-.lightning:nth-child(1){left:20%;}
-.lightning:nth-child(2){left:40%;}
-.lightning:nth-child(3){left:60%;}
-.lightning:nth-child(4){left:80%;}
-
-@keyframes flash{
-0%{opacity:0.1;}
-50%{opacity:1;}
-100%{opacity:0.1;}
-}
-
-/* ELECTRIC CIRCLE */
-
-.loader{
-width:120px;
-height:120px;
-border-radius:50%;
-border:6px solid transparent;
-border-top:6px solid cyan;
-border-right:6px solid yellow;
-animation:spin 1s linear infinite;
 box-shadow:0 0 20px cyan;
-margin-bottom:20px;
 }
 
-@keyframes spin{
-0%{transform:rotate(0deg);}
-100%{transform:rotate(360deg);}
+h2{
+color:#00ffff;
 }
 
-/* NP PRODUCTS TEXT */
-
-.title{
-font-size:40px;
-color:cyan;
-text-shadow:0 0 10px cyan,0 0 20px cyan;
-animation:pulse 1.5s infinite;
+input{
+width:90%;
+padding:10px;
+margin:8px;
+border-radius:8px;
+border:none;
 }
 
-@keyframes pulse{
-0%{transform:scale(1);}
-50%{transform:scale(1.1);}
-100%{transform:scale(1);}
+button{
+padding:10px 20px;
+background:cyan;
+border:none;
+border-radius:10px;
+cursor:pointer;
 }
 
-.subtitle{
+button:hover{
+background:#00cccc;
+}
+
+.screen{
+margin-top:15px;
+background:black;
+color:#00ff00;
+font-family:monospace;
+padding:15px;
+border-radius:10px;
+}
+
+.footer{
 margin-top:10px;
-color:#00ffcc;
-font-size:18px;
+font-size:13px;
+color:#ccc;
 }
 
 </style>
-
-<script>
-
-setTimeout(function(){
-
-window.location.href="index.html";
-
-},5000)
-
-</script>
 
 </head>
 
 <body>
 
-<div class="lightning"></div>
-<div class="lightning"></div>
-<div class="lightning"></div>
-<div class="lightning"></div>
+<div class="box">
 
-<div class="loader"></div>
+<h2>⚡ Appliance Cost Finder</h2>
 
-<div class="title">NP Products</div>
-<div class="subtitle">⚡ Electric System Loading...</div>
+<input id="oldUnits" type="number" placeholder="Last Month Units">
+
+<input id="power" type="number" placeholder="Appliance Power (W)">
+
+<input id="hours" type="number" placeholder="Hours per Day">
+
+<button onclick="calculate()">Check Cost</button>
+
+<div class="screen" id="output">
+Result will appear here
+</div>
+
+<div class="footer">
+Developing by Nishitha Perera
+</div>
+
+</div>
+
+<script>
+
+function bill(units){
+
+let energy=0
+let fixed=0
+
+if(units<=30){
+energy=units*5.29
+fixed=94.11
+}
+
+else if(units<=60){
+energy=(30*5.29)+((units-30)*9.41)
+fixed=247.03
+}
+
+else if(units<=90){
+energy=(30*5.29)+(30*9.41)+((units-60)*21.76)
+fixed=470.54
+}
+
+else if(units<=120){
+energy=(30*5.29)+(30*9.41)+(30*21.76)+((units-90)*28.23)
+fixed=1176.35
+}
+
+else if(units<=180){
+energy=(30*5.29)+(30*9.41)+(30*21.76)+(30*28.23)+((units-120)*48.23)
+fixed=1764.53
+}
+
+else{
+energy=(30*5.29)+(30*9.41)+(30*21.76)+(30*28.23)+(60*48.23)+((units-180)*71.76)
+fixed=2470.34
+}
+
+return energy+fixed
+}
+
+function calculate(){
+
+let oldUnits=parseFloat(document.getElementById("oldUnits").value)
+
+let power=parseFloat(document.getElementById("power").value)
+
+let hours=parseFloat(document.getElementById("hours").value)
+
+let daily=(power/1000)*hours
+
+let monthly=daily*30
+
+let newUnits=oldUnits+monthly
+
+let oldBill=bill(oldUnits)
+
+let newBill=bill(newUnits)
+
+let extra=newBill-oldBill
+
+document.getElementById("output").innerHTML=
+
+"Appliance Monthly Units : "+monthly.toFixed(2)+" kWh <br><br>"+
+"Old Bill : Rs "+oldBill.toFixed(2)+"<br>"+
+"New Bill : Rs "+newBill.toFixed(2)+"<br><br>"+
+"Extra Cost : Rs "+extra.toFixed(2)
+
+}
+
+</script>
 
 </body>
 </html>
